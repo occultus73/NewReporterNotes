@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">NewReporterNotes</string>
+    <string name="delete_all_notes">Delete all notes</string>
+    <string name="save">Save</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="priority">Priority:</string>
+</resources>
