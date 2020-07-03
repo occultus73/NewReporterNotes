@@ -85,32 +85,36 @@ class MainActivity : AppCompatActivity() {
 
 
         if (requestCode == ADD_NOTE_REQUEST && resultCode == Activity.RESULT_OK) {
-            val title = data.getStringExtra(EXTRA_TITLE)
-            val description = data.getStringExtra(EXTRA_DESCRIPTION)
-            val priority = data.getIntExtra(EXTRA_PRIORITY, 1)
+            data?.let {
+                val title = it.getStringExtra(EXTRA_TITLE)
+                val description = it.getStringExtra(EXTRA_DESCRIPTION)
+                val priority = it.getIntExtra(EXTRA_PRIORITY, 1)
 
-            val note = Note(noteTitle = title, noteDescription = description, notePriority = priority)
+                val note = Note(noteTitle = title, noteDescription = description, notePriority = priority)
 
-            noteViewModel.insert(note)
-            Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show()
-
-
-        } else if (requestCode == EDIT_NOTE_REQUEST && resultCode == Activity.RESULT_OK) {
-            val id = data.getIntExtra(EXTRA_ID, -1)
-            if (id == -1) {
-                Toast.makeText(this, "Note can't be updated", Toast.LENGTH_SHORT).show()
-                return
+                noteViewModel.insert(note)
+                Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show()
             }
 
-            val title = data.getStringExtra(EXTRA_TITLE)
-            val description = data.getStringExtra(EXTRA_DESCRIPTION)
-            val priority = data.getIntExtra(EXTRA_PRIORITY, 1)
+        } else if (requestCode == EDIT_NOTE_REQUEST && resultCode == Activity.RESULT_OK) {
 
-            val note = Note(noteTitle = title, noteDescription = description, notePriority = priority)
+            data?.let{
+                val title = it.getStringExtra(EXTRA_TITLE)
+                val description = it.getStringExtra(EXTRA_DESCRIPTION)
+                val priority = it.getIntExtra(EXTRA_PRIORITY, 1)
+                val noteID = it.getIntExtra(EXTRA_ID, -1)
 
-            note.noteID= id
-            noteViewModel.update(note)
-            Toast.makeText(this, "Note updated", Toast.LENGTH_SHORT).show()
+                if (noteID == -1) {
+                    Toast.makeText(this, "Note can't be updated", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                val note = Note(noteTitle = title, noteDescription = description, notePriority = priority, noteID = noteID)
+
+                noteViewModel.update(note)
+                Toast.makeText(this, "Note updated", Toast.LENGTH_SHORT).show()
+            }
+
         } else {
             Toast.makeText(this, "Note not saved", Toast.LENGTH_SHORT).show()
         }
