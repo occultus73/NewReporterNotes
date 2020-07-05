@@ -19,6 +19,6 @@ interface NoteDAO {
     @Query("DELETE FROM note_table")
     fun deleteAllNotes()
 
-    @Query("SELECT * FROM note_table ORDER BY note_priority DESC")
+    @Query("SELECT * FROM note_table ORDER BY note_priority ASC")
     fun getAllNotes(): LiveData<List<Note>>
 }

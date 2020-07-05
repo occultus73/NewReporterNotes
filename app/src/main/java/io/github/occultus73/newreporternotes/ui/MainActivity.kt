@@ -1,7 +1,6 @@
 package io.github.occultus73.newreporternotes.ui
 
 import android.app.Activity
-import android.app.Notification.EXTRA_TITLE
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -9,7 +8,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,12 +17,13 @@ import io.github.occultus73.newreporternotes.model.Note
 import io.github.occultus73.newreporternotes.viewmodel.NoteViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
+const val ADD_NOTE_REQUEST = 1
+const val EDIT_NOTE_REQUEST = 2
 
 class MainActivity : AppCompatActivity() {
-    val ADD_NOTE_REQUEST = 1
-    val EDIT_NOTE_REQUEST = 2
 
-    private var noteViewModel: NoteViewModel = ViewModelProviders.of(this).get(NoteViewModel::class.java)
+
+    private val noteViewModel: NoteViewModel by lazy { ViewModelProvider(this).get(NoteViewModel::class.java) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,8 +44,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         //setup noteViewModel
-        noteViewModel = ViewModelProviders.of(this).get(NoteViewModel::class.java)
-        noteViewModel.allNotes.observe(this, Observer<List<Note>> { notes -> adapter.submitList(notes) })
+        noteViewModel.allNotes.observe(this, Observer{ adapter.submitList(it) })
 
         //setup swipe functionality
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
@@ -67,7 +66,8 @@ class MainActivity : AppCompatActivity() {
 
 
         }).attachToRecyclerView(recyclerView)
-        adapter.setOnItemClickListener(object : NoteListAdapter.OnItemClickListener {
+
+        adapter.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(note: Note) {
                 val intent = Intent(this@MainActivity, AddEditNoteActivity::class.java)
                 intent.putExtra(EXTRA_ID, note.noteID)
@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
                 val description = it.getStringExtra(EXTRA_DESCRIPTION)
                 val priority = it.getIntExtra(EXTRA_PRIORITY, 1)
 
-                val note = Note(noteTitle = title, noteDescription = description, notePriority = priority)
+                val note = Note(noteTitle = title ?: "", noteDescription = description ?: "", notePriority = priority)
 
                 noteViewModel.insert(note)
                 Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show()
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                     return
                 }
 
-                val note = Note(noteTitle = title, noteDescription = description, notePriority = priority, noteID = noteID)
+                val note = Note(noteTitle = title ?: "", noteDescription = description ?: "", notePriority = priority, noteID = noteID)
 
                 noteViewModel.update(note)
                 Toast.makeText(this, "Note updated", Toast.LENGTH_SHORT).show()
@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.getItemId()) {
+        return when (item.itemId) {
             R.id.delete_all_notes -> {
                 noteViewModel.deleteAllNotes()
                 Toast.makeText(this, "All notes deleted", Toast.LENGTH_SHORT).show()

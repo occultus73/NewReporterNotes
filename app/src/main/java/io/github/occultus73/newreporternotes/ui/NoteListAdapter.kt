@@ -1,15 +1,14 @@
 package io.github.occultus73.newreporternotes.ui
 
-import android.R
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import io.github.occultus73.newreporternotes.R
 import io.github.occultus73.newreporternotes.model.Note
-import java.lang.String
+import kotlinx.android.synthetic.main.note_item.view.*
 
 private val DIFF_CALLBACK: DiffUtil.ItemCallback<Note> =
     object : DiffUtil.ItemCallback<Note>() {
@@ -29,23 +28,6 @@ class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteHolder>(DIFF_CALLB
 
     private lateinit var  listener: OnItemClickListener
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteHolder {
-        val itemView: View = LayoutInflater.from(parent.context)
-            .inflate(R.layout.note_item, parent, false)
-        return NoteHolder(itemView)
-    }
-
-    override fun onBindViewHolder(holder: NoteHolder, position: Int) {
-        val currentNote: Note = getItem(position)
-        text_view_title.text = currentNote.noteTitle
-        text_view_description.text = currentNote.noteDescription
-        text_view_priority.text = String.valueOf(currentNote.notePriority)
-    }
-
-    fun getNoteAt(position: Int): Note? {
-        return getItem(position)
-    }
-
     inner class NoteHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         init {
             itemView.setOnClickListener {
@@ -55,13 +37,35 @@ class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteHolder>(DIFF_CALLB
                 }
             }
         }
+
+        fun bind(position: Int) {
+            with(itemView) {
+                val currentNote: Note = getItem(position)
+
+                text_view_title.text = currentNote.noteTitle
+                text_view_description.text = currentNote.noteDescription
+                text_view_priority.text = currentNote.notePriority.toString()
+            }
+        }
     }
 
-    interface OnItemClickListener {
-        fun onItemClick(note: Note)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteHolder {
+        val itemView: View = LayoutInflater.from(parent.context)
+            .inflate(R.layout.note_item, parent, false)
+        return NoteHolder(itemView)
+    }
+
+    override fun onBindViewHolder(holder: NoteHolder, position: Int) = holder.bind(position)
+
+    fun getNoteAt(position: Int): Note? {
+        return getItem(position)
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.listener = listener
     }
+}
+
+interface OnItemClickListener {
+    fun onItemClick(note: Note)
 }
