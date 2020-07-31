@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import io.github.occultus73.newreporternotes.model.Note
 
 import io.github.occultus73.newreporternotes.model.NoteRepository
+import kotlinx.coroutines.GlobalScope
 
 
 class NoteViewModel(application: Application) : AndroidViewModel(application) {

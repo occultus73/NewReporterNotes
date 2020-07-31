@@ -37,11 +37,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         //setup recyclerview
-        val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.setHasFixedSize(true)
+        recycler_view.layoutManager = LinearLayoutManager(this)
+        recycler_view.setHasFixedSize(true)
         val adapter = NoteListAdapter()
-        recyclerView.adapter = adapter
+        recycler_view.adapter = adapter
 
         //setup noteViewModel
         noteViewModel.allNotes.observe(this, Observer{ adapter.submitList(it) })
@@ -65,7 +64,7 @@ class MainActivity : AppCompatActivity() {
             }
 
 
-        }).attachToRecyclerView(recyclerView)
+        }).attachToRecyclerView(recycler_view)
 
         adapter.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(note: Note) {
